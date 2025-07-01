@@ -1,27 +1,25 @@
 # AngularBlog
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.1.2.
+![JustBlog Web App UI](https://cdn.dribbble.com/userupload/26899745/file/original-3e367826e645adede899b4460a665582.png?resize=2400x1800&vertical=center)
 
-## Development server
+Este projeto foi gerado com [Angular CLI](https://github.com/angular/angular-cli) versão **14.1.2**.  
+A **migração para Angular 20 está em andamento**, com várias novas features já em desenvolvimento.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+---
 
-## Code scaffolding
+## 🚧 Status da Atualização
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+- Migração **em progresso** para Angular 20.
+- Funcionalidades já em desenvolvimento:
+  - Suporte inicial a **Module Federation**.
+  - Implementação de **Signal-based reactivity** para estado.
+  - Otimizações de **lazy-loading** e performance.
+  - Novos hooks de ciclo de vida e APIs de debug.
 
-## Build
+---
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+## 🛠️ Uso no Ambiente de Desenvolvimento
 
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+### Servidor de desenvolvimento
+```bash
+ng serve
