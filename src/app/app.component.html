@@ -1,4 +1,13 @@
-<header>
-  <app-menu-bar></app-menu-bar>
-</header>
-<router-outlet></router-outlet>
+
+<section class="grid grid-template-areas">
+  <div class="item logo">logo</div>
+  <div class="item nav">nav</div>
+  <div class="item content">
+    <router-outlet></router-outlet>
+  </div>
+  <div class="item sidenav">
+    <app-menu-bar></app-menu-bar>
+  </div>
+  <div class="item advert">advert</div>
+  <div class="item footer">footer</div>
+</section>
