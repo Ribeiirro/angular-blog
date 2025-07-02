@@ -13,20 +13,18 @@ import { HeaderBarComponent } from './components/header-bar/header-bar.component
 
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    MenuBarComponent,
-    MenuTitleComponent,
-    BigCardComponent,
-    SmallCardComponent,
-    HomeComponent,
-    ContentComponent,
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule
-  ],
-  providers: [],
-  bootstrap: [AppComponent]
+    declarations: [AppComponent],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        MenuBarComponent,
+        MenuTitleComponent,
+        BigCardComponent,
+        SmallCardComponent,
+        HomeComponent,
+        ContentComponent
+    ],
+    providers: [],
+    bootstrap: [AppComponent]
 })
 export class AppModule { }

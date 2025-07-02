@@ -6,8 +6,7 @@ import { Component, OnInit } from '@angular/core';
     styleUrls: [
         './menu-title.component.css',
         './menu-title.responsive.component.css'
-    ],
-    standalone: false
+    ]
 })
 export class MenuTitleComponent implements OnInit {
 
