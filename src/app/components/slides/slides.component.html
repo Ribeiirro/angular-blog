@@ -1,0 +1,26 @@
+<div class="carousel" #carousel>
+  <div class="list" #list>
+    <div
+      class="item"
+      *ngFor="let slide of slides; let i = index"
+      [style.backgroundImage]="'url(' + slide.img + ')'"
+    >
+      <div class="content">
+        <div class="title">{{ slide.title }}</div>
+        <div class="name">{{ slide.name }}</div>
+        <div class="des">{{ slide.des }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrows" #arrowsDiv>
+    <button class="prev">
+      <i class="fa fa-chevron-left" aria-hidden="true"></i>
+    </button>
+    <button class="next">
+      <i class="fa fa-chevron-right" aria-hidden="true"></i>
+    </button>
+  </div>
+
+  <div class="timeRunning" #runningTimeBar></div>
+</div>

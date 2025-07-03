@@ -1,11 +1,134 @@
-.container__articles{
-  margin-top: 30px;
+.container {
+  max-width: 120rem;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
 
-  @media(min-width: 700px) {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
+.filter-tabs {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.filter-button {
+  padding: 0.5rem;
+  min-width: 10rem;
+  border: none;
+  border-radius: 2.5rem;
+  background-color: var(--white);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1.4rem;
+  font-weight: 500;
+}
+
+.filter-button:hover {
+  background-color: var(--off-white);
+  transform: translateY(-0.2rem);
+}
+
+.filter-button.active {
+  background-color: var(--soft-beige);
+  color: var(--white);
+  box-shadow: 0 0.2rem 0.5rem var(--warm-tan);
+}
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(28rem, 1fr));
+  gap: 2.4rem;
+  padding: 2rem 0;
+}
+
+.gallery-item {
+  background: var(--white);
+  border-radius: 1.2rem;
+  overflow: hidden;
+  box-shadow: 0 0.4rem 1rem rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: none;
+  flex-direction: column;
+}
+
+.gallery-item.visible {
+  display: flex;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
+.gallery-item:hover {
+  transform: translateY(-0.6rem);
+  box-shadow: 0 0.8rem 2rem rgba(0, 0, 0, 0.15);
+}
 
+.media-wrapper {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 1.2rem 1.2rem 0 0;
+}
+
+.media-badge-container {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  z-index: 2;
+}
+
+.media-badge {
+  width: 3.2rem;
+  height: 3.2rem;
+  border-radius: 50%;
+  background-color: var(--soft-beige);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  box-shadow: 0 0.2rem 0.6rem rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease;
+}
+
+.media-badge:hover {
+  background-color: var(--warm-tan);
+}
+
+.gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.item-info {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.item-title {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.item-category {
+  font-size: 1.4rem;
+  color: #888;
+}

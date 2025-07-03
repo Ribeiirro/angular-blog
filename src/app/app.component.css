@@ -1,42 +1,45 @@
 .grid {
+  height: 100vh;
   display: grid;
   background-color: var(--off-white);
   color: var(--almost-black);
-  gap: 5px;
-}
+  overflow: hidden;
 
-.grid-template-areas {
-  grid-template-columns: 3% 1fr 15%;
+  grid-template-columns: 6.3rem 1fr 35%;
   grid-template-rows: auto 1fr auto;
   grid-template-areas:
-    "logo nav nav"
+    "sidenav nav nav"
     "sidenav content advert"
     "sidenav footer footer";
 }
 
-.logo {
-  grid-area: logo;
-  background-color: aqua;
-}
-
 .nav {
   grid-area: nav;
-  background-color: aquamarine;
+  position: sticky;
+  top: 0;
 }
 
 .content {
   grid-area: content;
-  background-color: bisque;
+  padding: 1rem; /* 10px */
+  overflow-y: auto;
+
+  /* Corrigido: esconder completamente o overflow */
+  overflow: auto;
+  overflow-anchor: none;
+}
+
+.content::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
 }
 
 .sidenav {
   grid-area: sidenav;
-  background-color: cadetblue;
 }
 
 .advert {
   grid-area: advert;
-  background-color: chocolate;
+  margin: 2rem 4rem 2rem 0rem;
 }
 
 .footer {
@@ -44,8 +47,10 @@
   background-color: blueviolet;
 }
 
-.logo, .nav, .content, .sidenav, .advert, .footer {
-  min-height: 50px;
-  padding: 10px;
+.nav,
+.content,
+.sidenav,
+.advert,
+.footer {
   box-sizing: border-box;
 }

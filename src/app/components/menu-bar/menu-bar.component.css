@@ -1,9 +1,9 @@
 /* Sidebar */
 .sidebar {
   height: 100vh;
-  width: 60px;
-  background-color: #1f1f1f;
-  color: white;
+  width: 6rem;
+  background-color: var(--white);
+  color: var(--cool-gray);
   position: fixed;
   top: 0;
   left: 0;
@@ -15,16 +15,17 @@
 }
 
 .sidebar:hover {
-  width: 220px;
+  width: 22rem; 
 }
 
 .sidebar .logo {
   text-align: center;
-  padding: 20px 0;
+  padding: 2rem 0;
+  margin-left: -0.63rem;
 }
 
 .sidebar .logo img {
-  height: 40px;
+  height: 4rem;
   transition: transform 0.3s;
 }
 
@@ -34,6 +35,11 @@
   margin: 0;
 }
 
+.sidebar nav ul li i {
+  color: var(--primary-orange);
+  opacity: 0.6;
+}
+
 .sidebar nav ul li {
   position: relative;
 }
@@ -41,24 +47,24 @@
 .sidebar nav ul li a {
   display: flex;
   align-items: center;
-  gap: 15px;
-  padding: 14px 20px;
-  color: white;
+  gap: 1.5rem; 
+  padding: 1.4rem 2rem; 
+  color: var(--cool-gray);
   text-decoration: none;
-  font-size: 16px;
+  font-size: 1.6rem; 
   transition: background 0.3s, color 0.3s;
   white-space: nowrap;
 }
 
 .sidebar nav ul li a i {
-  font-size: 18px;
-  min-width: 20px;
+  font-size: 1.8rem; 
+  min-width: 2rem; 
   text-align: center;
 }
 
 .sidebar nav ul li a:hover {
-  background-color: #2f2f2f;
-  color: #f1f1f1;
+  background-color: var(--soft-white);
+  color: var(--almost-black);
 }
 
 .sidebar nav ul li .label {
@@ -76,8 +82,9 @@
 .submenu .submenu-items {
   display: none;
   flex-direction: column;
-  padding-left: 50px;
-  background: #292929;
+  padding-left: 5rem; 
+  background-color: var(--soft-white);
+
 }
 
 .submenu:hover .submenu-items {
@@ -85,18 +92,17 @@
 }
 
 .submenu .submenu-items li a {
-  padding: 10px 0;
-  font-size: 14px;
-  color: #ccc;
+  padding: 1rem 0; 
+  font-size: 1.4rem; 
+  color: var(--white);
 }
 
 .submenu .submenu-items li a:hover {
-  color: white;
+  color: var(--cool-gray);
 }
 
-
 /* Optional: Responsive improvement */
-@media (max-width: 768px) {
+@media (max-width: 76.8rem) { /* 768px */
   .sidebar {
     position: absolute;
     height: 100%;

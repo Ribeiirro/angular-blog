@@ -1,6 +1,8 @@
-<app-menu-title></app-menu-title>
+<!-- <app-menu-title></app-menu-title> -->
 
-<div class="container__articles">
+<app-slides></app-slides>
+
+<!-- <div class="container__articles">
   <div class="articles__main">
 
     <app-big-card
@@ -34,5 +36,40 @@
       photoCover="https://midias.correiobraziliense.com.br/_midias/jpg/2022/07/22/675x450/1_xmen-26096415.jpeg?20220722171339?20220722171339"
     >
     </app-small-card>
+  </div>
+</div> -->
+
+<div class="container">
+
+  <div class="filter-tabs">
+    <button class="filter-button active" data-category="all">Tout</button>
+    <button class="filter-button" data-category="ESP32">ESP32</button>
+    <button class="filter-button" data-category="raspberry">Raspberry</button>
+    <button class="filter-button" data-category="nodejs">NodeJS</button>
+    <button class="filter-button" data-category="frontend">Frontend</button>
+  </div>
+
+  <div class="gallery">
+    <div class="gallery-item visible" data-category="ESP32">
+     <div class="media-wrapper">
+  <div class="media-badge-container">
+    <span class="media-badge">
+      <i class="fa fa-bookmark" aria-hidden="true"></i>
+    </span>
+    <span class="media-badge">
+      <i class="fa fa-share-alt" aria-hidden="true"></i>
+    </span>
+  </div>
+  <img
+    src="https://rtortosa.fr/img/projects/esp32_DHT11_OLED.jpg"
+    alt="DHT11 ESP32 ODLED"
+  />
+</div>
+
+      <div class="item-info">
+        <div class="item-title">DHT11 ESP32 ODLED</div>
+        <div class="item-category">ESP32</div>
+      </div>
+    </div>
   </div>
 </div>

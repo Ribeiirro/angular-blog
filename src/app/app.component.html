@@ -1,13 +1,17 @@
-
-<section class="grid grid-template-areas">
-  <div class="item logo">logo</div>
-  <div class="item nav">nav</div>
-  <div class="item content">
-    <router-outlet></router-outlet>
-  </div>
-  <div class="item sidenav">
-    <app-menu-bar></app-menu-bar>
-  </div>
-  <div class="item advert">advert</div>
-  <div class="item footer">footer</div>
-</section>
+<div class="main">
+  <section class="grid">
+    <div class="item nav">
+      <app-header-bar></app-header-bar>
+    </div>
+    <div class="item content">
+      <router-outlet></router-outlet>
+    </div>
+    <div class="item sidenav">
+      <app-menu-bar></app-menu-bar>
+    </div>
+    <div class="item advert">
+      <app-card></app-card>
+    </div>
+    <div class="item footer"></div>
+  </section>
+</div>

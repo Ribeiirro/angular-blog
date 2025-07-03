@@ -1,22 +1,59 @@
 /* You can add global styles to this file, and also import other style files */
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap");
 
+/* Define base font-size para 62.5% = 10px */
+html {
+  font-size: 62.5%;
+}
+
+body {
+  height: 100%;
+  width: 100%;
+}
+
 :root {
-  --off-white: #eeedec;
-  --almost-black: #18120e;
-  --medium-gray: #9d9b9b;
-  --dark-brown: #5e4d42;
-  --primary-orange: #c35521;
-  --soft-beige: #d6baa4;
-  --cool-gray: #758186;
-  --warm-tan: #c08e68;
+  /* Base Colors */
+  --primary-orange: #ffa500;   /* Amarelo Ouro / Laranja */
+  --light-amber:   #ffbf40;   /* Âmbar Claro */
+  --pale-gold:     #ffe08a;   /* Dourado Pálido */
+  --soft-ivory:    #fff3c2;   /* Marfim Suave */
+  --light-beige:   #fff7e6;   /* Bege Claro */
+  --off-white:     #eeedec;   /* Branco Suave (já existente) */
+  --white:         #ffffff;   /* Branco */
+}
+
+:root {
+  /* Branco e variantes */
+  --white:         #ffffff;  /* Branco puro */
+  --off-white:     #eeedec;  /* Branco suave */
+  --soft-white:    #f7fdfe;  /* Branco azulado suave */
+  --light-beige:   #fff7e6;  /* Bege claro */
+  --soft-ivory:    #fff3c2;  /* Marfim suave */
+  --pale-gold:     #ffe08a;  /* Dourado pálido */
+  --light-amber:   #ffbf40;  /* Âmbar claro */
+  --primary-orange:#ffa500;  /* Amarelo ouro / laranja claro */
+
+  /* Cinzas e Neutros */
+  --light-gray:    #d8d8d8;  /* Cinza claro */
+  --medium-gray:   #9d9b9b;  /* Cinza médio (existente) */
+  --cool-gray:     #758186;  /* Cinza frio (existente) */
+  --warm-gray:     #b0a89f;  /* Cinza quente, puxando para bege */
+  --dark-gray:     #3e3e3e;  /* Cinza escuro */
+
+  /* Pretos e Escuros */
+  --almost-black:  #18120e;  /* Quase preto (existente) */
+  --pure-black:    #000000;  /* Preto absoluto */
+  --dark-brown:    #5e4d42;  /* Marrom escuro (existente) */
+
+  /* Carousel */
+  --left-position: 55%;
+  --transition-time: 1.2s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  background-color: var(--off-white);
   color: var(--almost-black);
   font-family: "Open Sans", sans-serif;
 }
