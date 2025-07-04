@@ -1,37 +1,56 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import {dataFake} from '../../data/dataFake'
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
-    selector: 'app-content',
-    templateUrl: './content.component.html',
-    styleUrls: ['./content.component.css'],
-    imports: [RouterLink]
+  selector: 'app-content',
+  templateUrl: './content.component.html',
+  styleUrl: './content.component.css',
+  imports: [ ReactiveFormsModule, FormsModule, CommonModule],
 })
-export class ContentComponent implements OnInit {
-  photoCover:string = ""
-  contentTitle:string = ""
-  contentDescription:string = ""
-  private id:string | null = "0"
+export class ContentComponent {
+  form: FormGroup;
 
-  constructor(
-    private route:ActivatedRoute
-  ) { }
+  interesses = [
+    { label: 'Música', value: 'musica' },
+    { label: 'Ciência', value: 'ciencia' },
+    { label: 'Esporte', value: 'esporte' },
+    { label: 'Livros', value: 'livros' },
+    { label: 'Arte', value: 'arte' },
+  ];
 
-  ngOnInit(): void {
-    this.route.paramMap.subscribe( value =>
-     this.id = value.get("id")
-    )
+  constructor(private fb: FormBuilder) {
+    this.form = this.fb.group({
+      nome: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      senha: ['', Validators.required],
+      data_nascimento: ['', Validators.required],
+      genero: ['', Validators.required],
+      interesses: this.fb.group({}),
+      comentarios: [''],
+    });
 
-    this.setValuesToComponent(this.id)
+    // Inicializa os checkboxes
+    this.interesses.forEach((interesse) => {
+      (this.form.get('interesses') as FormGroup).addControl(
+        interesse.value,
+        this.fb.control(false)
+      );
+    });
   }
 
-  setValuesToComponent(id:string | null){
-    const result = dataFake.filter(article => article.id == id)[0]
-
-    this.contentTitle = result.title
-    this.contentDescription = result.description
-    this.photoCover = result.photoCover
+  onSubmit() {
+    if (this.form.valid) {
+      console.log(this.form.value);
+    } else {
+      alert('Formulário inválido');
+    }
   }
-
 }

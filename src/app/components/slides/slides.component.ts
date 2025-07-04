@@ -97,7 +97,7 @@ export class SlidesComponent implements AfterViewInit {
     const bar = this.runningTimeBarRef.nativeElement;
     bar.style.animation = 'none';
     bar.offsetHeight;
-    bar.style.animation = `runningTime ${this.TIME_AUTO_NEXT / 1000}s linear forwards`;
+    bar.style.animation = `runningTime ${this.TIME_AUTO_NEXT / 3000}s linear forwards`;
   }
 
   handleSliderNavigation(direction: 'next' | 'prev') {

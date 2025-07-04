@@ -40,6 +40,18 @@
 .advert {
   grid-area: advert;
   margin: 2rem 4rem 2rem 0rem;
+
+  display: flex;
+  gap: 3rem;
+  flex-direction: column;
+
+  /* Corrigido: esconder completamente o overflow */
+  overflow: auto;
+  overflow-anchor: none;
+}
+
+.advert::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
 }
 
 .footer {

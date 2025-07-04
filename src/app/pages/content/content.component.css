@@ -1,29 +1,60 @@
-.container__content{
 
-  width: 100%;
-  height: 100vh;
-
-  margin-top: 20px;
-
-  display: flex;
-  flex-direction: column;
-
-  align-items: center;
+form {
+    background-color: #fff; /* Fundo branco para o formulário */
+    max-width: 50%; /* Largura máxima do formulário */
+    margin: 50px auto; /* Centralizar o formulário */
+    padding: 20px;
+    border-radius: 10px; /* Bordas arredondadas */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra suave */
 }
 
-.content__cover > img{
-  border:5px solid rgb(144, 144, 144);
-  border-radius: 5px;
-  width: 500px;
-  min-width: 500px;
-  height: 300px;
+label {
+    display: block;
+    margin-bottom: 10px;
 }
 
-.content__description{
-  margin-top: 15px;
+input[type="text"],
+input[type="email"],
+input[type="date"],
+select,
+textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px; /* Bordas arredondadas */
+    box-sizing: border-box; /* Garante que o padding não altere a largura do elemento */
 }
 
-.content__description > p{
-  margin-top: 20px;
-  color: rgb(198, 197, 197);
+input[type="submit"] {
+    background-color: #e91e63; /* Cor de fundo rosa */
+    color: #fff; /* Cor do texto branco */
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px; /* Bordas arredondadas */
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra suave */
+}
+
+input[type="submit"]:hover {
+    background-color: #c2185b; /* Cor de fundo rosa escuro quando hover */
+}
+
+select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px; /* Bordas arredondadas */
+    background-color: #fff; /* Cor de fundo branco */
+    box-sizing: border-box; /* Garante que o padding não altere a largura do elemento */
+}
+
+textarea {
+    resize: vertical; /* Permite redimensionamento vertical */
+    width: 100%; /* Define a largura da caixa de texto como 100% */
+    border: 1px solid #ccc;
+    border-radius: 5px; /* Bordas arredondadas */
+    padding: 10px;
+    box-sizing: border-box; /* Garante que o padding não altere a largura do elemento */
 }

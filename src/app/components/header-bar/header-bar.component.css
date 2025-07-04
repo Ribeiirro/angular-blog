@@ -16,7 +16,6 @@
   max-width: 45rem; /* 450px */
   gap: 0.5rem;
   border: 1px solid var(--primary-orange);
-
 }
 
 .header__search i {
@@ -32,7 +31,6 @@
   font-size: 1.3rem; /* 10px */
   width: 100%;
   outline: none;
-
 }
 
 .header__search input::placeholder {
@@ -53,6 +51,21 @@
   gap: 1rem;
 }
 
+.header__actions button.notification {
+  position: relative;
+}
+
+.header__actions button.notification::before {
+  background: red;
+  content: "";
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 50%;
+  position: absolute;
+  right: 10px;
+  top: 12px;
+}
+
 .icon-button {
   background: none;
   border: none;
@@ -60,10 +73,9 @@
   font-size: 1.8rem; /* 18px */
   border-radius: 50%;
   border: 0.1rem solid var(--primary-orange); /* 1px */
-  width: 4rem;  /* 40px */
+  width: 4rem; /* 40px */
   height: 4rem; /* 40px */
   color: var(--primary-orange);
-
 }
 
 .icon-button.write {
@@ -93,7 +105,7 @@
 }
 
 .avatar {
-  width: 4rem;  /* 40px */
+  width: 4rem; /* 40px */
   height: 4rem; /* 40px */
   border-radius: 50%;
   overflow: hidden;

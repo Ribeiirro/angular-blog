@@ -1,3 +1,8 @@
+<div id="ytplayer"></div>
+    <div *ngIf="errorMessage" class="error-message">
+  {{ errorMessage }}
+  <button *ngIf="errorMessage.includes('Quota exceeded')" (click)="clearCacheAndReload()">Limpar Cache e Tentar Novamente</button>
+</div>
 <div id="player-bg-artwork" [style.backgroundImage]="'url(' + bgArtworkUrl + ')'"></div>
 <div id="player-bg-layer"></div>
 <div id="player-container">
@@ -26,19 +31,15 @@
         id="album-art"
         [ngClass]="{ active: isPlaying, buffering: isBuffering }"
       >
-        <img
-          src="https://file.garden/Z-a1C4tJlx8uXKO5/hmmmm/download.jpg"
-          [ngClass]="{ active: currArtwork === '_1' }"
-          id="_1"
-        />
+        <img [src]="bgArtworkUrl || 'assets/logo.jpg'" alt="album art" />
         <div id="buffer-box">Buffering ...</div>
       </div>
+  
       <div id="player-controls">
         <div class="control">
           <div class="button" id="play-previous" (click)="selectTrack(-1)">
             <i class="fas fa-backward"></i>
           </div>
-
           <div class="button" id="play-pause-button" (click)="playPause()">
             <i class="fas" [ngClass]="isPlaying ? 'fa-pause' : 'fa-play'"></i>
           </div>
@@ -50,4 +51,3 @@
     </div>
   </div>
 </div>
-<audio #audioElement></audio>

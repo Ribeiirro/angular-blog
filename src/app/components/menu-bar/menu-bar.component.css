@@ -20,7 +20,7 @@
 
 .sidebar .logo {
   text-align: center;
-  padding: 2rem 0;
+  padding: 2rem 0 0;
   margin-left: -0.63rem;
 }
 
@@ -35,9 +35,18 @@
   margin: 0;
 }
 
-.sidebar nav ul li i {
+.sidebar .logo svg {
+  width: 4rem;
+  height: 4rem;
+}
+
+.sidebar .logo svg path,
+.sidebar nav ul li i svg path,
+.sidebar nav ul li i svg circle,
+.sidebar nav ul li i,
+.sidebar nav ul li span
+ {
   color: var(--primary-orange);
-  opacity: 0.6;
 }
 
 .sidebar nav ul li {

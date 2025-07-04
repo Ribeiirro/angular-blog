@@ -4,9 +4,14 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
+  EventEmitter,
+  Input,
   OnInit,
+  Output,
   ViewChild,
 } from '@angular/core';
+import { YoutubeService } from '../../services/youtube.service';
+declare var YT: any; // Declara YT global da API
 
 @Component({
   selector: 'app-card-play',
@@ -14,116 +19,221 @@ import {
   templateUrl: './card-play.component.html',
   styleUrl: './card-play.component.css',
 })
-
 export class CardPlayComponent implements OnInit, AfterViewInit {
   @ViewChild('seekBarContainer') seekBarContainer?: ElementRef;
-  @ViewChild('audioElement') audioElement?: ElementRef<HTMLAudioElement>;
-
-  albums: string[] = ['أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ'];
-  trackNames: string[] = ['001 Surah Al-Fatihah'];
-  albumArtworks: string[] = ['_1'];
-  trackUrls: string[] = [
-    'https://file.garden/Z-a1C4tJlx8uXKO5/hmmmm/001%20%20%20Surah%20Al%20Fatiha%20by%20Mishary%20Al%20Afasy%20(iRecite).mp3'
-  ];
-
+  @Input() selectedVideo: any;
+  @Output() videoSelected = new EventEmitter<any>();
+  player: any;
+  videos: any[] = [];
   currIndex: number = 0;
-  currAlbum: string = '';
-  currTrackName: string = '';
-  currArtwork: string = '';
-  bgArtworkUrl: string = '';
-  isPlaying: boolean = false;
-  currentTime: string = '00:00';
-  trackLength: string = '00:00';
-  seekTime: string = '00:00';
-  seekWidth: number = 0;
-  seekHoverWidth: number = 0;
-  isTrackTimeActive: boolean = false;
-  isBuffering: boolean = false;
-  playProgress: number = 0;
-  private buffInterval: any = null;
-  private lastBufferTime: number = 0;
-  private lastUpdateTime: number = 0;
-  private tFlag: boolean = false;
-  private playingPromise: Promise<void> | null = null;
-  private isProcessingPlayPause: boolean = false;
+  isPlaying = false;
+  isBuffering = false;
+  currentTime = '00:00';
+  trackLength = '00:00';
+  seekWidth = 0;
+  seekHoverWidth = 0;
+  seekTime = '00:00';
+  isTrackTimeActive = false;
+  errorMessage: string | null = null;
 
-  constructor(private cdr: ChangeDetectorRef) {}
+  currAlbum = 'Todah Music';
+  currTrackName = '';
+  bgArtworkUrl = '';
 
-  ngOnInit(): void {
-    this.currIndex = 0;
-    this.currAlbum = this.albums[0];
-    this.currTrackName = this.trackNames[0];
-    this.currArtwork = this.albumArtworks[0];
-    this.bgArtworkUrl = `https://raw.githubusercontent.com/himalayasingh/music-player-1/master/img/${this.currArtwork}.jpg`;
+  constructor(
+    private cdr: ChangeDetectorRef,
+    private youtubeService: YoutubeService
+  ) {}
+
+  ngOnInit() {
+    this.loadVideos();
   }
 
-  ngAfterViewInit(): void {
-    if (this.audioElement && this.seekBarContainer) {
-      this.initPlayer();
-    } else {
-      console.error('audioElement or seekBarContainer is not defined in the template.');
+  loadVideos() {
+    this.youtubeService.getAllVideos().subscribe({
+      next: (videos) => {
+        this.videos = videos;
+        console.log(
+          'Total de vídeos no CardPlayComponent:',
+          this.videos.length
+        );
+        this.errorMessage =
+          videos.length > 0
+            ? null
+            : 'Nenhum vídeo disponível no cache. Tente novamente após o reinício da cota.';
+        if (this.selectedVideo) {
+          this.currIndex =
+            this.videos.findIndex(
+              (v) => v.videoId === this.selectedVideo.videoId
+            ) || 0;
+          this.updateTrackInfo();
+        }
+        if ((window as any)['YT'] && (window as any)['YT'].Player) {
+          this.loadYouTubePlayer();
+        } else {
+          (window as any)['onYouTubeIframeAPIReady'] = () =>
+            this.loadYouTubePlayer();
+        }
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Erro ao carregar vídeos:', error);
+        this.errorMessage = error.message.includes('Quota exceeded')
+          ? 'A cota diária da API do YouTube foi excedida. Tente novamente amanhã às 04:00 ou limpe o cache para usar vídeos salvos.'
+          : error.message.includes('API key not valid')
+          ? 'Chave da API inválida. Contate o administrador.'
+          : 'Erro ao carregar vídeos. Tente novamente mais tarde.';
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  clearCacheAndReload() {
+    this.youtubeService.clearCache();
+    this.loadVideos();
+  }
+
+  loadYouTubePlayer() {
+    if (!this.videos.length) {
+      console.error('Nenhum vídeo disponível para carregar o player');
+      this.errorMessage = 'Nenhum vídeo disponível para reprodução.';
+      this.cdr.detectChanges();
+      return;
+    }
+    this.player = new (window as any).YT.Player('ytplayer', {
+      height: '0',
+      width: '0',
+      videoId: this.videos[this.currIndex].videoId,
+      playerVars: {
+        autoplay: 0,
+        controls: 0,
+        rel: 0,
+        showinfo: 0,
+        modestbranding: 1,
+      },
+      events: {
+        onReady: (event: any) => {
+          console.log(
+            'YouTube Player pronto:',
+            this.videos[this.currIndex].videoId
+          );
+          this.updateTrackInfo();
+          this.cdr.detectChanges();
+        },
+        onStateChange: (event: any) => {
+          const state = event.data;
+          this.isPlaying = state === (window as any).YT.PlayerState.PLAYING;
+          this.isBuffering = state === (window as any).YT.PlayerState.BUFFERING;
+          console.log('Estado do player:', state);
+          this.cdr.detectChanges();
+        },
+        onError: (event: any) => {
+          console.error('Erro no YouTube Player:', event.data);
+          this.errorMessage =
+            event.data === 150 || event.data === 101
+              ? 'Vídeo não disponível para incorporação'
+              : `Erro no player: ${event.data}`;
+          this.cdr.detectChanges();
+        },
+      },
+    });
+  }
+
+  updateTrackInfo() {
+    if (this.videos[this.currIndex]) {
+      this.currTrackName = this.videos[this.currIndex].title;
+      this.bgArtworkUrl = this.videos[this.currIndex].thumbnail;
+      this.cdr.detectChanges();
     }
   }
 
-  playPause(): void {
-    if (!this.audioElement || this.isProcessingPlayPause) return;
+  ngAfterViewInit() {
+    setInterval(() => this.updateCurrentTime(), 500);
+  }
 
-    this.isProcessingPlayPause = true;
-    const audio = this.audioElement.nativeElement;
-
-    if (audio.paused) {
-      this.isPlaying = true;
-      this.playingPromise = audio.play().then(() => {
-        this.checkBuffering();
-        this.isProcessingPlayPause = false;
-        this.cdr.detectChanges();
-      }).catch((error) => {
-        console.error('Error playing audio:', error);
-        this.isPlaying = false;
-        this.isProcessingPlayPause = false;
-        this.cdr.detectChanges();
-      });
-    } else {
-      if (this.playingPromise) {
-        this.playingPromise.then(() => {
-          audio.pause();
-          this.isPlaying = false;
-          clearInterval(this.buffInterval);
-          this.isBuffering = false;
-          this.isProcessingPlayPause = false;
-          this.cdr.detectChanges();
-        });
+  ngOnChanges() {
+    if (this.selectedVideo && this.videos.length > 0) {
+      this.currIndex =
+        this.videos.findIndex(
+          (v) => v.videoId === this.selectedVideo.videoId
+        ) || 0;
+      this.updateTrackInfo();
+      if (this.player) {
+        this.loadVideo();
       } else {
-        audio.pause();
-        this.isPlaying = false;
-        clearInterval(this.buffInterval);
-        this.isBuffering = false;
-        this.isProcessingPlayPause = false;
-        this.cdr.detectChanges();
+        this.loadYouTubePlayer();
       }
     }
   }
 
+  playPause(): void {
+    if (!this.player) {
+      console.error('Player não inicializado');
+      return;
+    }
+    const state = this.player.getPlayerState();
+    console.log('Estado atual do player:', state);
+    if (state === (window as any).YT.PlayerState.PLAYING) {
+      this.player.pauseVideo();
+      this.isPlaying = false;
+    } else {
+      this.player.playVideo();
+      this.isPlaying = true;
+    }
+    this.cdr.detectChanges();
+  }
+
+  selectTrack(flag: number): void {
+    if (flag === 1) {
+      this.currIndex = (this.currIndex + 1) % this.videos.length;
+    } else if (flag === -1) {
+      this.currIndex =
+        (this.currIndex - 1 + this.videos.length) % this.videos.length;
+    }
+    this.updateTrackInfo();
+    this.loadVideo();
+    this.videoSelected.emit(this.videos[this.currIndex]); // Notificar CardComponent
+  }
+
+  loadVideo(): void {
+    if (!this.player || !this.videos.length || !this.videos[this.currIndex]) {
+      console.error('Player ou vídeos não disponíveis');
+      return;
+    }
+    this.player.loadVideoById(this.videos[this.currIndex].videoId);
+    this.seekWidth = 0;
+    this.isTrackTimeActive = false;
+    this.currentTime = '00:00';
+    this.trackLength = '00:00';
+    this.isPlaying = false;
+    this.cdr.detectChanges();
+  }
+
+  updateCurrentTime(): void {
+    if (!this.player || typeof this.player.getCurrentTime !== 'function')
+      return;
+
+    const current = this.player.getCurrentTime();
+    const duration = this.player.getDuration();
+
+    this.currentTime = this.formatTime(current);
+    this.trackLength = this.formatTime(duration);
+    this.seekWidth = (current / duration) * 100;
+
+    this.isTrackTimeActive = !isNaN(current) && !isNaN(duration);
+    this.cdr.detectChanges();
+  }
+
   showHover(event: MouseEvent): void {
-    if (!this.seekBarContainer || !this.audioElement) return;
+    if (!this.seekBarContainer || !this.player) return;
 
-    const seekBarPos = this.seekBarContainer.nativeElement.getBoundingClientRect();
-    const seekT = event.clientX - seekBarPos.left;
-    const audio = this.audioElement.nativeElement;
-    const seekLoc = audio.duration * (seekT / seekBarPos.width);
+    const rect = this.seekBarContainer.nativeElement.getBoundingClientRect();
+    const offsetX = event.clientX - rect.left;
+    const duration = this.player.getDuration();
+    const seekTo = duration * (offsetX / rect.width);
 
-    this.seekHoverWidth = seekT;
-
-    const cM = seekLoc / 60;
-    let ctMinutes = Math.floor(cM);
-    let ctSeconds = Math.floor(seekLoc - ctMinutes * 60);
-
-    if (ctMinutes < 0 || ctSeconds < 0) return;
-
-    const formattedMinutes = ctMinutes.toString().padStart(2, '0');
-    const formattedSeconds = ctSeconds.toString().padStart(2, '0');
-
-    this.seekTime = isNaN(ctMinutes) || isNaN(ctSeconds) ? '--:--' : `${formattedMinutes}:${formattedSeconds}`;
+    this.seekHoverWidth = offsetX;
+    this.seekTime = this.formatTime(seekTo);
     this.cdr.detectChanges();
   }
 
@@ -134,122 +244,229 @@ export class CardPlayComponent implements OnInit, AfterViewInit {
   }
 
   playFromClickedPos(event: MouseEvent): void {
-    if (!this.seekBarContainer || !this.audioElement) return;
+    if (!this.seekBarContainer || !this.player) return;
 
-    const seekBarPos = this.seekBarContainer.nativeElement.getBoundingClientRect();
-    const seekT = event.clientX - seekBarPos.left;
-    const audio = this.audioElement.nativeElement;
-    const seekLoc = audio.duration * (seekT / seekBarPos.width);
-    audio.currentTime = seekLoc;
-    this.seekWidth = seekT;
-    this.hideHover();
+    const rect = this.seekBarContainer.nativeElement.getBoundingClientRect();
+    const offsetX = event.clientX - rect.left;
+    const duration = this.player.getDuration();
+    const seekTo = duration * (offsetX / rect.width);
+
+    this.player.seekTo(seekTo, true);
     this.cdr.detectChanges();
   }
 
-  updateCurrTime(): void {
-    if (!this.audioElement) return;
-
-    const audio = this.audioElement.nativeElement;
-    this.lastUpdateTime = new Date().getTime();
-
-    if (!this.tFlag) {
-      this.tFlag = true;
-      this.isTrackTimeActive = true;
-    }
-
-    let curMinutes = Math.floor(audio.currentTime / 60);
-    let curSeconds = Math.floor(audio.currentTime - curMinutes * 60);
-    let durMinutes = Math.floor(audio.duration / 60);
-    let durSeconds = Math.floor(audio.duration - durMinutes * 60);
-
-    this.playProgress = audio.duration ? (audio.currentTime / audio.duration) * 100 : 0;
-
-    const formattedCurMinutes = curMinutes.toString().padStart(2, '0');
-    const formattedCurSeconds = curSeconds.toString().padStart(2, '0');
-    const formattedDurMinutes = durMinutes.toString().padStart(2, '0');
-    const formattedDurSeconds = durSeconds.toString().padStart(2, '0');
-
-    this.currentTime = isNaN(curMinutes) || isNaN(curSeconds) ? '00:00' : `${formattedCurMinutes}:${formattedCurSeconds}`;
-    this.trackLength = isNaN(durMinutes) || isNaN(durSeconds) ? '00:00' : `${formattedDurMinutes}:${formattedDurSeconds}`;
-
-    if (isNaN(curMinutes) || isNaN(curSeconds) || isNaN(durMinutes) || isNaN(durSeconds)) {
-      this.isTrackTimeActive = false;
-    } else {
-      this.isTrackTimeActive = true;
-    }
-
-    this.seekWidth = this.playProgress;
-
-    if (this.playProgress >= 100) {
-      this.isPlaying = false;
-      this.seekWidth = 0;
-      this.currentTime = '00:00';
-      this.isBuffering = false;
-      clearInterval(this.buffInterval);
-    }
-
-    this.cdr.detectChanges();
-  }
-
-  checkBuffering(): void {
-    clearInterval(this.buffInterval);
-    this.buffInterval = setInterval(() => {
-      const currentTime = new Date().getTime();
-      if (this.lastUpdateTime === 0 || currentTime - this.lastUpdateTime > 1000) {
-        this.isBuffering = true;
-      } else {
-        this.isBuffering = false;
-      }
-      this.lastBufferTime = currentTime;
-      this.cdr.detectChanges();
-    }, 100);
-  }
-
-  selectTrack(flag: number): void {
-    if (!this.audioElement) return;
-
-    this.currIndex = 0; // Single track, so keep index at 0
-
-    this.seekWidth = 0;
-    this.isTrackTimeActive = false;
-    this.currentTime = '00:00';
-    this.trackLength = '00:00';
-
-    this.currAlbum = this.albums[0];
-    this.currTrackName = this.trackNames[0];
-    this.currArtwork = this.albumArtworks[0];
-    this.bgArtworkUrl = `https://raw.githubusercontent.com/himalayasingh/music-player-1/master/img/${this.currArtwork}.jpg`;
-
-    const audio = this.audioElement.nativeElement;
-    audio.src = this.trackUrls[this.currIndex];
-    this.lastUpdateTime = 0;
-    this.lastBufferTime = new Date().getTime();
-
-    if (flag !== 0) {
-      this.isPlaying = true;
-      this.playingPromise = audio.play().then(() => {
-        this.checkBuffering();
-        this.cdr.detectChanges();
-      }).catch((error) => {
-        console.error('Error playing audio:', error);
-        this.isPlaying = false;
-        this.cdr.detectChanges();
-      });
-    } else {
-      this.cdr.detectChanges();
-    }
-  }
-
-  initPlayer(): void {
-    if (!this.audioElement) {
-      console.error('Audio element not found in the template.');
-      return;
-    }
-
-    const audio = this.audioElement.nativeElement;
-    audio.loop = false;
-    audio.addEventListener('timeupdate', () => this.updateCurrTime());
-    audio.addEventListener('ended', () => this.selectTrack(1));
-    this.selectTrack(0);
+  formatTime(seconds: number): string {
+    const min = Math.floor(seconds / 60)
+      .toString()
+      .padStart(2, '0');
+    const sec = Math.floor(seconds % 60)
+      .toString()
+      .padStart(2, '0');
+    return `${min}:${sec}`;
   }
 }
+// export class CardPlayComponent implements OnInit, AfterViewInit {
+//   @ViewChild('seekBarContainer') seekBarContainer?: ElementRef;
+//   @Input() selectedVideo: any;
+//   @Output() videoSelected = new EventEmitter<any>(); // Emitir vídeo selecionado
+//   player: any;
+//   videos: any[] = [];
+//   currIndex: number = 0;
+//   isPlaying = false;
+//   isBuffering = false;
+//   currentTime = '00:00';
+//   trackLength = '00:00';
+//   seekWidth = 0;
+//   seekHoverWidth = 0;
+//   seekTime = '00:00';
+//   isTrackTimeActive = false;
+
+//   currAlbum = 'Todah Music';
+//   currTrackName = '';
+//   bgArtworkUrl = '';
+
+//   constructor(
+//     private cdr: ChangeDetectorRef,
+//     private youtubeService: YoutubeService
+//   ) {}
+
+//   ngOnInit() {
+//     this.youtubeService.getAllVideos().subscribe((videos) => {
+//       this.videos = videos;
+//       console.log('Vídeos carregados:', this.videos);
+//       if (this.selectedVideo) {
+//         this.currIndex = this.videos.findIndex(v => v.videoId === this.selectedVideo.videoId) || 0;
+//         this.updateTrackInfo();
+//       }
+//       if ((window as any)['YT'] && (window as any)['YT'].Player) {
+//         this.loadYouTubePlayer();
+//       } else {
+//         (window as any)['onYouTubeIframeAPIReady'] = () => this.loadYouTubePlayer();
+//       }
+//     });
+//   }
+
+//   ngAfterViewInit() {
+//     setInterval(() => this.updateCurrentTime(), 500);
+//   }
+
+//   ngOnChanges() {
+//     if (this.selectedVideo && this.videos.length > 0) {
+//       this.currIndex = this.videos.findIndex(v => v.videoId === this.selectedVideo.videoId) || 0;
+//       this.updateTrackInfo();
+//       if (this.player) {
+//         this.loadVideo();
+//       } else {
+//         this.loadYouTubePlayer();
+//       }
+//     }
+//   }
+
+//   loadYouTubePlayer() {
+//     if (this.videos.length === 0 || !this.videos[this.currIndex]) {
+//       console.error('Nenhum vídeo disponível para reprodução');
+//       return;
+//     }
+
+//     if (this.player) {
+//       this.player.destroy();
+//     }
+
+//     this.player = new (window as any).YT.Player('ytplayer', {
+//       height: '0',
+//       width: '0',
+//       videoId: this.videos[this.currIndex].videoId,
+//       playerVars: {
+//         autoplay: 0,
+//         controls: 0,
+//         modestbranding: 1,
+//         rel: 0,
+//         showinfo: 0,
+//       },
+//       events: {
+//         onReady: (event: any) => {
+//           console.log('YouTube Player pronto:', this.videos[this.currIndex].videoId);
+//           this.updateCurrentTime();
+//           this.cdr.detectChanges();
+//         },
+//         onStateChange: (event: any) => {
+//           const state = event.data;
+//           this.isPlaying = state === (window as any).YT.PlayerState.PLAYING;
+//           this.isBuffering = state === (window as any).YT.PlayerState.BUFFERING;
+//           console.log('Estado do player:', state);
+//           this.cdr.detectChanges();
+//         },
+//         onError: (event: any) => {
+//           console.error('Erro no YouTube Player:', event.data);
+//         },
+//       },
+//     });
+//   }
+
+//   playPause(): void {
+//     if (!this.player) {
+//       console.error('Player não inicializado');
+//       return;
+//     }
+//     const state = this.player.getPlayerState();
+//     console.log('Estado atual do player:', state);
+//     if (state === (window as any).YT.PlayerState.PLAYING) {
+//       this.player.pauseVideo();
+//       this.isPlaying = false;
+//     } else {
+//       this.player.playVideo();
+//       this.isPlaying = true;
+//     }
+//     this.cdr.detectChanges();
+//   }
+
+//   selectTrack(flag: number): void {
+//     if (flag === 1) {
+//       this.currIndex = (this.currIndex + 1) % this.videos.length;
+//     } else if (flag === -1) {
+//       this.currIndex = (this.currIndex - 1 + this.videos.length) % this.videos.length;
+//     }
+//     this.updateTrackInfo();
+//     this.loadVideo();
+//     this.videoSelected.emit(this.videos[this.currIndex]); // Notificar CardComponent
+//   }
+
+//   updateTrackInfo(): void {
+//     const video = this.videos[this.currIndex];
+//     if (video) {
+//       this.currTrackName = video.title.includes('|') ? video.title.split('|')[1].trim() : video.title;
+//       this.bgArtworkUrl = video.thumbnail;
+//       console.log('Thumbnail atualizada:', this.bgArtworkUrl);
+//       this.cdr.detectChanges();
+//     } else {
+//       console.error('Vídeo não encontrado para o índice:', this.currIndex);
+//       this.bgArtworkUrl = 'assets/logo.jpg';
+//       this.cdr.detectChanges();
+//     }
+//   }
+
+//   loadVideo(): void {
+//     if (!this.player || !this.videos.length || !this.videos[this.currIndex]) {
+//       console.error('Player ou vídeos não disponíveis');
+//       return;
+//     }
+//     this.player.loadVideoById(this.videos[this.currIndex].videoId);
+//     this.seekWidth = 0;
+//     this.isTrackTimeActive = false;
+//     this.currentTime = '00:00';
+//     this.trackLength = '00:00';
+//     this.isPlaying = false;
+//     this.cdr.detectChanges();
+//   }
+
+//   updateCurrentTime(): void {
+//     if (!this.player || typeof this.player.getCurrentTime !== 'function') return;
+
+//     const current = this.player.getCurrentTime();
+//     const duration = this.player.getDuration();
+
+//     this.currentTime = this.formatTime(current);
+//     this.trackLength = this.formatTime(duration);
+//     this.seekWidth = (current / duration) * 100;
+
+//     this.isTrackTimeActive = !isNaN(current) && !isNaN(duration);
+//     this.cdr.detectChanges();
+//   }
+
+//   showHover(event: MouseEvent): void {
+//     if (!this.seekBarContainer || !this.player) return;
+
+//     const rect = this.seekBarContainer.nativeElement.getBoundingClientRect();
+//     const offsetX = event.clientX - rect.left;
+//     const duration = this.player.getDuration();
+//     const seekTo = duration * (offsetX / rect.width);
+
+//     this.seekHoverWidth = offsetX;
+//     this.seekTime = this.formatTime(seekTo);
+//     this.cdr.detectChanges();
+//   }
+
+//   hideHover(): void {
+//     this.seekHoverWidth = 0;
+//     this.seekTime = '00:00';
+//     this.cdr.detectChanges();
+//   }
+
+//   playFromClickedPos(event: MouseEvent): void {
+//     if (!this.seekBarContainer || !this.player) return;
+
+//     const rect = this.seekBarContainer.nativeElement.getBoundingClientRect();
+//     const offsetX = event.clientX - rect.left;
+//     const duration = this.player.getDuration();
+//     const seekTo = duration * (offsetX / rect.width);
+
+//     this.player.seekTo(seekTo, true);
+//     this.cdr.detectChanges();
+//   }
+
+//   formatTime(seconds: number): string {
+//     const min = Math.floor(seconds / 60).toString().padStart(2, '0');
+//     const sec = Math.floor(seconds % 60).toString().padStart(2, '0');
+//     return `${min}:${sec}`;
+//   }
+// }

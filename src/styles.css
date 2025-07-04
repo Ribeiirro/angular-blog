@@ -12,17 +12,6 @@ body {
 }
 
 :root {
-  /* Base Colors */
-  --primary-orange: #ffa500;   /* Amarelo Ouro / Laranja */
-  --light-amber:   #ffbf40;   /* Âmbar Claro */
-  --pale-gold:     #ffe08a;   /* Dourado Pálido */
-  --soft-ivory:    #fff3c2;   /* Marfim Suave */
-  --light-beige:   #fff7e6;   /* Bege Claro */
-  --off-white:     #eeedec;   /* Branco Suave (já existente) */
-  --white:         #ffffff;   /* Branco */
-}
-
-:root {
   /* Branco e variantes */
   --white:         #ffffff;  /* Branco puro */
   --off-white:     #eeedec;  /* Branco suave */

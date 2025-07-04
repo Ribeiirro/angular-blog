@@ -1,36 +1,52 @@
 <div class="card">
   <div class="card-details">
-    <p>Ultimas atualizações</p>
+    <p>Últimas atualizações</p>
     <span>ver mais</span>
   </div>
   <div class="card-list">
     <div class="container">
+      <!-- THUMBNAIL DO VÍDEO SELECIONADO -->
       <div class="card-photo">
-        <img src="assets/logo.jpg" alt="" srcset="" />
+        <img
+          [src]="selectedVideo?.thumbnail || 'assets/logo.jpg'"
+          alt="thumb"
+        />
       </div>
+
+      <!-- LISTA DOS HINOS -->
       <div class="card-info">
-        <div class="card-article">
-          <h1><a>A tua palavra</a></h1>
-          <span>Larissa Pires</span>
-        </div>
-        <div class="card-article atived">
+        <div
+          class="card-article"
+          *ngFor="let video of videos"
+          [class.atived]="selectedVideo && video.videoId === selectedVideo.videoId"
+          (click)="selectVideo(video)"
+        >
           <h1>
-            <a> Thalles Roberto - Eu Escolho Deus (Saudade - Clipe Oficial)</a>
+            <a>
+              {{
+                video.title.includes("|")
+                  ? video.title.split("|")[1].trim()
+                  : video.title
+              }}
+            </a>
           </h1>
-          <span>Thalles Roberto </span>
-        </div>
-        <div class="card-article">
-          <h1><a>A tua palavra</a></h1>
-          <span>Larissa Pires</span>
-        </div>
-        <div class="card-article">
-          <h1>
-            <a> Thalles Roberto - Eu Escolho Deus (Saudade - Clipe Oficial)</a>
-          </h1>
-          <span>Thalles Roberto </span>
+          <span>
+            {{
+              video.title.includes("|")
+                ? video.title.split("|")[0].trim()
+                : "Desconhecido"
+            }}
+          </span>
         </div>
       </div>
     </div>
-    <app-card-play></app-card-play>
+    <app-card-play [selectedVideo]="selectedVideo" (videoSelected)="onVideoSelected($event)"></app-card-play>
   </div>
 </div>
+
+<!-- card-play.component.html -->
+<div class="yt-container-hidden">
+  <div id="ytplayer"></div>
+</div>
+
+
